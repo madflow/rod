@@ -11,13 +11,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ysmood/gson"
+
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/cdp"
 	"github.com/go-rod/rod/lib/devices"
 	"github.com/go-rod/rod/lib/input"
 	"github.com/go-rod/rod/lib/proto"
 	"github.com/go-rod/rod/lib/utils"
-	"github.com/ysmood/gson"
 )
 
 func TestGetElementPage(t *testing.T) {
@@ -341,6 +342,21 @@ func TestInputTime(t *testing.T) {
 		g.mc.stubErr(7, proto.RuntimeCallFunctionOn{})
 		el.MustInputTime(now)
 	})
+}
+
+func TestInputColor(t *testing.T) {
+	g := setup(t)
+
+	p := g.page.MustNavigate(g.srcFile("fixtures/input.html"))
+
+	var el *rod.Element
+	{
+		el = p.MustElement("[type=color]")
+		el.MustInputColor("#ff6f00")
+
+		g.Eq(el.MustText(), "#ff6f00")
+		g.True(p.MustHas("[event=input-color-change]"))
+	}
 }
 
 func TestElementInputDate(t *testing.T) {
